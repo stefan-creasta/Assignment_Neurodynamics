@@ -98,7 +98,6 @@ def simulation(T, Network, inhibitory_neurons, excitatory_neurons):
         Network.setCurrent(background_firing(inhibitory_neurons, excitatory_neurons))
         Network.update()
         V[t, :], _ = Network.getState()
-    plt.plot(V[:, 1])
     t, m = np.where(V > 29)
     print(m.shape)
     print(t.shape)
@@ -107,7 +106,7 @@ def simulation(T, Network, inhibitory_neurons, excitatory_neurons):
         if m[i] < 800:
             mat[t[i], m[i]] = 1
     x, y = np.nonzero(mat)
-    #plt.scatter(x, y)
+    plt.scatter(x, y)
     plt.show()
 
 inhibitory_neurons = 200
