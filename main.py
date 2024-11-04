@@ -163,7 +163,7 @@ def compute_firing_rate(V, excitatory_neurons, nr_populations, window_size=50, s
 
 def plot_firing_rates(firing_rates, nr_populations, window_size=50, step_size=20):
     time_points = np.arange(0, len(firing_rates[0]) * step_size, step_size)
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 4))
 
     for pop in range(nr_populations):
         plt.plot(time_points, firing_rates[pop], label=f'Module {pop + 1}')
@@ -178,16 +178,27 @@ inhibitory_neurons = 200
 excitatory_neurons = 800
 n = inhibitory_neurons + excitatory_neurons
 nr_populations = 8
-p = 0
+p = 0.875
 D_max = 20
 W = plot(inhibitory_neurons, excitatory_neurons, nr_populations)
 D = get_delays(W, inhibitory_neurons, excitatory_neurons, D_max)
 
-a = 0.02 * np.ones(1000)
-b_ = [0.2] * 800 + [0.25] * 200
-b = np.array(b_)
-c = np.array([-65] * 1000)
-d = np.array([8] * 800 + [2] * 200)
+a = np.zeros(1000)
+b = np.zeros(1000)
+c = np.zeros(1000)
+d = np.zeros(1000)
+for i in range(1000):
+    a[i] = 0.02
+    c[i] = -65
+    r = random.rand()
+    if i < 800:
+        b[i] = 0.2
+        d[i] = 8 - 6 * (r * r)
+        c[i] += 15 * (r * r)
+    else:
+        a[i] += 0.08 * r
+        b[i] = 0.25 - 0.05 * r
+
 
 Network = IzNetwork(n, D_max)
 Network.setDelays(D)
