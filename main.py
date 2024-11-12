@@ -1,4 +1,3 @@
-import random
 import matplotlib.pyplot as plt
 import iznetwork
 import numpy as np
@@ -15,11 +14,11 @@ def initialize_weights(inhibitory_neurons, excitatory_neurons, nr_populations):
     #excitatory-excitatory
     for population in range(nr_populations):
         for it in range(1000):
-            x = int(population * neurons_per_population + random.randint(0, 99))
-            y = int(population * neurons_per_population + random.randint(0, 99))
+            x = int(population * neurons_per_population + np.random.randint(0, 100))
+            y = int(population * neurons_per_population + np.random.randint(0, 100))
             while W[x][y] != 0 or x == y:
-                x = int(population * neurons_per_population + random.randint(0, 99))
-                y = int(population * neurons_per_population + random.randint(0, 99))
+                x = int(population * neurons_per_population + np.random.randint(0, 100))
+                y = int(population * neurons_per_population + np.random.randint(0, 100))
             #print(it)
             W[x][y] = 17
 
@@ -27,24 +26,24 @@ def initialize_weights(inhibitory_neurons, excitatory_neurons, nr_populations):
         inhibitory = int(excitatory_neurons + it)
         #inhibitory-excitatory
         for excitatory in range(excitatory_neurons):
-            W[inhibitory][excitatory] = -2 * random.random()
+            W[inhibitory][excitatory] = -2 * np.random.random()
         #inhibitory-inhibitory
         for it2 in range(inhibitory_neurons):
             inhibitory_2 = int(excitatory_neurons + it2)
             if inhibitory_2 != inhibitory:
-                W[inhibitory][inhibitory_2] = -1 * random.random()
+                W[inhibitory][inhibitory_2] = -1 * np.random.random()
     #excitatory-inhibitory
     connected = set()
     excitatory_list = [i for i in range(int(neurons_per_population))]
     inhibitory_list = [excitatory_neurons + i for i in range(inhibitory_neurons)]
-    random.shuffle(inhibitory_list)
+    np.random.shuffle(inhibitory_list)
     #print(inhibitory_list)
     inhibitory_index = 0
     for population in range(nr_populations):
-        random.shuffle(excitatory_list)
+        np.random.shuffle(excitatory_list)
         #print(excitatory_list)
         for excitatory in range(int(neurons_per_population)):
-            W[excitatory_list[excitatory] + population * int(neurons_per_population)][inhibitory_list[inhibitory_index]] = 50 * random.random()
+            W[excitatory_list[excitatory] + population * int(neurons_per_population)][inhibitory_list[inhibitory_index]] = 50 * np.random.random()
             #print(str(nr_populations * int(neurons_per_population)) + ", " + str(inhibitory_list[inhibitory_index]))
             if excitatory % 4 == 3:
                 inhibitory_index += 1
@@ -71,15 +70,17 @@ def rewire(W, excitatory_neurons, inhibitory_neurons, p, nr_populations):
             for it2 in range(neurons_per_population):
                 neuron1 = it + population * neurons_per_population
                 neuron2 = it2 + population * neurons_per_population
-                if W[neuron1][neuron2] != 0 and p >= random.random():
-                    new_population = random.randint(0, nr_populations - 1)
+                if W[neuron1][neuron2] != 0 and p >= np.random.random():
+                    new_population = np.random.randint(0, nr_populations)
                     while new_population == population:
-                        new_population = random.randint(0, nr_populations - 1)
-                    new_neuron = random.randint(0, neurons_per_population - 1) + new_population * neurons_per_population
+                        new_population = np.random.randint(0, nr_populations)
+                    if new_population == 8:
+                        print("A")
+                    new_neuron = np.random.randint(0, neurons_per_population) + new_population * neurons_per_population
                     while W[neuron1][new_neuron] != 0:
-                        new_neuron = random.randint(0, neurons_per_population - 1) + new_population * neurons_per_population
+                        new_neuron = np.random.randint(0, neurons_per_population) + new_population * neurons_per_population
+                    W[neuron1][new_neuron] = W[neuron1][neuron2]
                     W[neuron1][neuron2] = 0
-                    W[neuron1][new_neuron] = 17
 
 def plot(inhibitory_neurons, excitatory_neurons, nr_populations):
     W = initialize_weights(inhibitory_neurons, excitatory_neurons, nr_populations)
@@ -101,7 +102,7 @@ def get_delays(W, inhibitory_neurons, excitatory_neurons, D_max):
         for j in range(n):
             if W[i][j] != 0:
                 if i < excitatory_neurons and j < excitatory_neurons:
-                    D[i][j] = int(random.randint(1, 20))
+                    D[i][j] = int(np.random.randint(1, 21))
                 else:
                     D[i][j] = int(1)
             else:
@@ -110,7 +111,7 @@ def get_delays(W, inhibitory_neurons, excitatory_neurons, D_max):
 
 def background_firing(inhibitory_neurons, excitatory_neurons):
     n = inhibitory_neurons + excitatory_neurons
-    x = random.poisson(lam=0.01, size=n)
+    x = np.random.poisson(lam=0.01, size=n)
     I = np.zeros(n)
     for i in range(n):
         if x[i] > 0:
@@ -163,12 +164,13 @@ def compute_firing_rate(V, excitatory_neurons, nr_populations, window_size=50, s
 
 def plot_firing_rates(firing_rates, nr_populations, window_size=50, step_size=20):
     time_points = np.arange(0, len(firing_rates[0]) * step_size, step_size)
-    plt.figure(figsize=(10, 4))
+    plt.figure(figsize=(16, 4))
 
     for pop in range(nr_populations):
         plt.plot(time_points, firing_rates[pop], label=f'Module {pop + 1}')
 
     plt.xlabel('Time (ms)')
+    plt.xticks(list(range(0, 1001, 100)))
     plt.ylabel('Mean Firing Rate (per 50ms window)')
     plt.title('Mean Firing Rate in Each Module')
     plt.legend()
@@ -178,7 +180,7 @@ inhibitory_neurons = 200
 excitatory_neurons = 800
 n = inhibitory_neurons + excitatory_neurons
 nr_populations = 8
-p = 0.875
+p = 0.2
 D_max = 20
 W = plot(inhibitory_neurons, excitatory_neurons, nr_populations)
 D = get_delays(W, inhibitory_neurons, excitatory_neurons, D_max)
@@ -190,7 +192,7 @@ d = np.zeros(1000)
 for i in range(1000):
     a[i] = 0.02
     c[i] = -65
-    r = random.rand()
+    r = np.random.random()
     if i < 800:
         b[i] = 0.2
         d[i] = 8 - 6 * (r * r)
