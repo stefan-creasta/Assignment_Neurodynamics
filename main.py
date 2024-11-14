@@ -51,10 +51,10 @@ def initialize_weights(inhibitory_neurons, excitatory_neurons, nr_populations):
     return W
 """
 Rewire intra-community edges with a probability of p to an edge between communities, target community and 
-excitatory neuron within that community chosen randomly. 
+excitatory neurons within that community are chosen randomly. 
 
 Inputs:
-W - weight matrix of edges in network
+W - weight matrix of edges in the network
 inhibitory_neurons - number of inhibitory neurons (200)
 excitatory_neurons - number of excitatory neurons (800)
 p - rewiring probability
@@ -103,11 +103,11 @@ def plot(inhibitory_neurons, excitatory_neurons, nr_populations):
 
 """
 Initialize the delays between the connections of neurons in the network.
-Excitatory to Excitatory - delay is randomly assigned in the interval [1, 20]
+Excitatory to Excitatory - the delay is randomly assigned in the interval [1, 20]
 All other neuron connections have a delay of 1.
 
 Inputs:
-W - weight matrix of edges in network
+W - weight matrix of edges in the network
 inhibitory_neurons - number of inhibitory neurons (200)
 excitatory_neurons - number of excitatory neurons (800)
 """
@@ -126,7 +126,7 @@ def get_delays(W, inhibitory_neurons, excitatory_neurons):
     return D
 
 """
-Injects some external current at every timestep to ensure activation from dying out. Current is injected according to
+Inject some external current at every time step to ensure activation and prevent it from dying out. Current is injected according to
 a Poisson distribution, a number bigger than 0 representing an additional I = 15 current injected.
 
 Inputs:
@@ -144,7 +144,7 @@ def background_firing(inhibitory_neurons, excitatory_neurons):
     return I
 
 """
-Performs the euler method for simulating neuronal activity. The threshold for spiking is at 30. Additionally the method 
+Performs the Euler method for simulating neuronal activity. The threshold for spiking is at 30. Additionally the method 
 also produces the raster plot of firing neurons.
 
 Inputs:
@@ -181,13 +181,13 @@ def simulation(T, Network, inhibitory_neurons, excitatory_neurons):
     return V
 
 """
-Computes firing rate of each population with sliding window and downsampling.
+Computes the firing rate of each population with sliding window and downsampling.
 
 Inputs:
-V - voltage of each neuron at each timestep as generated from simulation
+V - voltage of each neuron at each timestep as generated from the simulation
 excitatory_neurons - number of excitatory neurons (800)
 nr_populations - number of populations (8)
-window_size - the size of the sliding window to compute mean firing rate
+window_size - the size of the sliding window to compute the mean firing rate
 step_size - number by which the sliding window should move each time
 """
 
@@ -236,7 +236,7 @@ def plot_firing_rates(firing_rates, nr_populations, step_size=20):
 
 """
 Function by which the plots present in the report were generated for a given p. It initializes the constants for 
-the neuron model, initializes the network and runs the simulation.
+the neuron model initializes the network and runs the simulation.
 
 Inputs:
 inhibitory_neurons - number of inhibitory neurons (200)
